@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Student Dashboard')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <!-- Student Header Card -->
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, white, var(--slate-50)); border-left: 6px solid var(--primary-600);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1.25rem;">
+                    <div style="width: 64px; height: 64px; border-radius: var(--radius-full); background: linear-gradient(135deg, var(--primary-600), #7c3aed); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800;">
+                        <span th:text="${#strings.substring(student.user.fullName, 0, 1)}">V</span>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900);" th:text="${student.user.fullName}">Demo Student</h1>
+                            <span class="badge badge-approved" th:if="${student.profileVisibility.name() == 'PUBLIC'}">Public Profile</span>
+                            <span class="badge badge-pending" th:if="${student.profileVisibility.name() == 'COLLEGE_ONLY'}">Campus Only</span>
+                            <span class="badge badge-rejected" th:if="${student.profileVisibility.name() == 'PRIVATE'}">Private</span>
+                        </div>
+                        <div style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.2rem;">
+                            <strong th:text="${student.rollNumber}">DEMO001</strong> •
+                            <span th:text="${student.branch}">CSE (AIML)</span> •
+                            Semester <span th:text="${student.currentSemester}">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <a th:href="@{'/portfolio/' + ${student.rollNumber}}" target="_blank" class="btn btn-secondary btn-sm">
+                        <span>🔗 View My Public Portfolio</span>
+                    </a>
+                    <a th:href="@{/student/profile}" class="btn btn-secondary btn-sm">
+                        <span>⚙️ Profile Settings</span>
+                    </a>
+                    <a th:href="@{/student/achievements/new}" class="btn btn-primary">
+                        <span>+ Upload Achievement</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric Badges Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eef2ff; color: #4338ca;">🏆</div>
+                <div>
+                    <div class="stat-val" th:text="${student.totalPoints} + ' pts'">69 pts</div>
+                    <div class="stat-label">Verified Merit Score</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #ecfdf5; color: #047857;">✅</div>
+                <div>
+                    <div class="stat-val" th:text="${verifiedCount}">5</div>
+                    <div class="stat-label">Verified Achievements</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fffbeb; color: #b45309;">⏳</div>
+                <div>
+                    <div class="stat-val" th:text="${pendingCount}">1</div>
+                    <div class="stat-label">Pending Faculty Review</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eff6ff; color: #1d4ed8;">✏️</div>
+                <div>
+                    <div class="stat-val" th:text="${correctionCount}">0</div>
+                    <div class="stat-label">Corrections Required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attention Banner if records need correction -->
+        <div th:if="${correctionCount > 0}" class="alert alert-warning">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+                <strong>Action Needed:</strong> Faculty returned <span th:text="${correctionCount}">1</span> submission(s) for correction.
+                <a th:href="@{/student/achievements(status='RETURNED_FOR_CORRECTION')}" style="text-decoration: underline; font-weight: 700; margin-left: 0.5rem;">Review &amp; Resubmit Now</a>
+            </div>
+        </div>
+
+        <!-- Recent Uploads Table -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">My Recent Achievement Records</h3>
+                    <p style="font-size: 0.82rem; color: var(--slate-500); margin-top: 0.2rem;">All submissions carry encrypted file proof &amp; immutable audit timestamps</p>
+                </div>
+                <div>
+                    <a th:href="@{/student/achievements}" class="btn btn-secondary btn-sm">View All Submissions</a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Achievement Title</th>
+                            <th>Event &amp; Organizer</th>
+                            <th>Level</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Points</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(recentAchievements)}">
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--slate-500);">
+                                No achievements uploaded yet. Click <strong>+ Upload Achievement</strong> to begin your portfolio!
+                            </td>
+                        </tr>
+                        <tr th:each="a : ${recentAchievements}">
+                            <td>
+                                <span class="badge badge-category" th:text="${a.category.name}">Hackathon</span>
+                            </td>
+                            <td>
+                                <strong th:text="${a.title}">Smart India Hackathon</strong>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);" th:if="${!#lists.isEmpty(a.documents)}">
+                                    📎 <span th:text="${#lists.size(a.documents)} + ' Proof Document(s)'">1 File</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div th:text="${a.eventName}">SIH Grand Finale</div>
+                                <div style="font-size: 0.78rem; color: var(--slate-500);" th:text="${a.organizer}">Ministry of Education</div>
+                            </td>
+                            <td>
+                                <span class="badge badge-level" th:text="${a.level.displayName}">National</span>
+                            </td>
+                            <td th:text="${a.eventDate}">2025-11-20</td>
+                            <td>
+                                <span class="badge" th:classappend="${a.status.badgeClass}" th:text="${a.status.label}">Verified</span>
+                            </td>
+                            <td>
+                                <strong style="color: #059669;" th:if="${a.status.name() == 'APPROVED'}" th:text="'+' + ${a.pointsAwarded} + ' pts'">+20 pts</strong>
+                                <span style="color: var(--slate-400);" th:if="${a.status.name() != 'APPROVED'}">—</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/student/achievements/' + ${a.id}}" class="btn btn-secondary btn-sm">Details</a>
+                                <a th:if="${a.status.name() == 'RETURNED_FOR_CORRECTION'}"
+                                   th:href="@{'/student/achievements/' + ${a.id} + '/edit'}"
+                                   class="btn btn-warning btn-sm" style="margin-left: 0.35rem;">Edit</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verifier Scope Mapping')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container container-narrow">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/dashboard}" style="font-size: 0.88rem; color: var(--slate-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to Admin Console
+            </a>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900); margin-top: 0.5rem;">
+                Verifier Scope Routing (Section 7.13)
+            </h1>
+            <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                Map authorized faculty reviewers to specific categories or departmental queues.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Faculty Member</th>
+                            <th>Employee ID</th>
+                            <th>Department</th>
+                            <th>Assigned Auditing Scope</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="f : ${faculties}">
+                            <td>
+                                <strong th:text="${f.user.fullName}">Prof. Name</strong>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);" th:text="${f.designation}">Designation</div>
+                            </td>
+                            <td><code th:text="${f.employeeId}">EMP-01</code></td>
+                            <td th:text="${f.department}">Department</td>
+                            <td>
+                                <form th:action="@{/admin/verifiers/update-scope}" method="post" style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input type="hidden" name="facultyId" th:value="${f.id}"/>
+                                    <select name="assignedCategoryScope" class="form-select" style="font-size: 0.85rem; padding: 0.35rem 0.5rem;">
+                                        <option value="ALL" th:selected="${f.assignedCategoryScope == 'ALL'}">ALL Categories</option>
+                                        <option th:each="c : ${categories}" th:value="${c.code}" th:text="${c.name} + ' (' + ${c.code} + ')'"
+                                                th:selected="${f.assignedCategoryScope == c.code}">Category</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.6rem;">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <span class="badge badge-category" th:text="${f.assignedCategoryScope}">ALL</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

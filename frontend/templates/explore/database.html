@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Central Achievement Database')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="badge badge-level" style="margin-bottom: 0.35rem;">SECTION 7.10 REPOSITORY</span>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">Centralised Achievement Database</h1>
+                <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                    Institutional search engine for every verified medal, publication, internship &amp; hackathon in Anurag University.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/explore/export/csv(query=${selectedQuery}, category=${selectedCategory}, level=${selectedLevel}, branch=${selectedBranch})}"
+                   class="btn btn-secondary">
+                    <span>📥 Export Result to CSV</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="card" style="margin-bottom: 1.75rem;">
+            <form th:action="@{/explore}" method="get">
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 0.75rem; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="searchQuery">Search Name, Roll No, Event or Title</label>
+                        <input type="text" id="searchQuery" name="query" class="form-control" placeholder="e.g. DEMO001, Demo Student, SIH, IEEE..." th:value="${selectedQuery}">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="filterCat">Category</label>
+                        <select id="filterCat" name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option th:each="c : ${categories}" th:value="${c.code}" th:text="${c.name}"
+                                    th:selected="${c.code == selectedCategory}">Hackathon</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="filterLvl">Level</label>
+                        <select id="filterLvl" name="level" class="form-select">
+                            <option value="">All Levels</option>
+                            <option th:each="l : ${levels}" th:value="${l.name()}" th:text="${l.displayName}"
+                                    th:selected="${l == selectedLevel}">National</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="filterBranch">Branch</label>
+                        <input type="text" id="filterBranch" name="branch" class="form-control" placeholder="e.g. CSE" th:value="${selectedBranch}">
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.15rem;">
+                            Search
+                        </button>
+                        <a th:href="@{/explore}" class="btn btn-secondary" style="padding: 0.65rem 0.85rem;" title="Reset filters">
+                            ✕
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Result Stats Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--slate-600);">
+            <div>
+                Found <strong th:text="${totalElements}">5</strong> verified achievement records
+            </div>
+            <div th:if="${totalPages > 1}">
+                Page <strong th:text="${currentPage + 1}">1</strong> of <span th:text="${totalPages}">1</span>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive" style="border: none;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll Number</th>
+                            <th>Branch</th>
+                            <th>Category</th>
+                            <th>Achievement Title</th>
+                            <th>Organizer / Venue</th>
+                            <th>Level</th>
+                            <th>Date</th>
+                            <th>Merit Points</th>
+                            <th>Proof</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(achievements)}">
+                            <td colspan="10" style="text-align: center; padding: 3rem; color: var(--slate-500);">
+                                No verified achievements matched your search criteria.
+                            </td>
+                        </tr>
+                        <tr th:each="a : ${achievements}">
+                            <td>
+                                <a th:href="@{'/portfolio/' + ${a.student.rollNumber}}" style="font-weight: 700;">
+                                    <span th:text="${a.student.user.fullName}">Demo Student</span>
+                                </a>
+                            </td>
+                            <td>
+                                <code th:text="${a.student.rollNumber}">DEMO001</code>
+                            </td>
+                            <td>
+                                <span th:text="${a.student.branch}">CSE (AIML)</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-category" th:text="${a.category.name}">Hackathon</span>
+                            </td>
+                            <td>
+                                <strong th:text="${a.title}">SIH 2025</strong>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);" th:text="${a.eventName}">Event Name</div>
+                            </td>
+                            <td th:text="${a.organizer}">Ministry of Education</td>
+                            <td>
+                                <span class="badge badge-level" th:text="${a.level.displayName}">National</span>
+                            </td>
+                            <td th:text="${a.eventDate}">2025-11-20</td>
+                            <td>
+                                <strong style="color: #059669;" th:text="'+' + ${a.pointsAwarded}">+20</strong>
+                            </td>
+                            <td>
+                                <span th:if="${!#lists.isEmpty(a.documents)}">
+                                    <a th:href="@{'/vault/documents/' + ${a.documents[0].id} + '/view'}" target="_blank"
+                                       class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.45rem; font-size: 0.72rem;">
+                                        View 📄
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+            <a th:if="${currentPage > 0}"
+               th:href="@{/explore(page=${currentPage - 1}, query=${selectedQuery}, category=${selectedCategory}, level=${selectedLevel}, branch=${selectedBranch})}"
+               class="btn btn-secondary btn-sm">← Previous</a>
+
+            <span style="display: flex; align-items: center; padding: 0 0.75rem; font-size: 0.88rem; color: var(--slate-600);">
+                Page <span th:text="${currentPage + 1}" style="font-weight: 700; margin: 0 0.25rem;">1</span> of <span th:text="${totalPages}" style="margin-left: 0.25rem;">1</span>
+            </span>
+
+            <a th:if="${currentPage + 1 < totalPages}"
+               th:href="@{/explore(page=${currentPage + 1}, query=${selectedQuery}, category=${selectedCategory}, level=${selectedLevel}, branch=${selectedBranch})}"
+               class="btn btn-secondary btn-sm">Next →</a>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

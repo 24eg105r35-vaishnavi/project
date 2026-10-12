@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Categories & Schemas')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/dashboard}" style="font-size: 0.88rem; color: var(--slate-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to Admin Console
+            </a>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900); margin-top: 0.5rem;">
+                Category &amp; Field Schema Administration (Section 7.13)
+            </h1>
+            <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                Categories and their field schemas are data, editable through screen without requiring code redeployment.
+            </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div th:each="cat : ${categories}" class="card">
+                <form th:action="@{/admin/categories/save}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="code" th:value="${cat.code}"/>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--slate-100); padding-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="badge badge-category" style="font-size: 0.9rem;" th:text="${cat.code}">CODE</span>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;" th:text="${cat.name}">Category Name</h3>
+                        </div>
+                        <span class="badge badge-approved" th:if="${cat.active}">Active</span>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Display Name</label>
+                            <input type="text" name="name" class="form-control" th:value="${cat.name}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Default Base Points</label>
+                            <input type="number" name="defaultPoints" class="form-control" th:value="${cat.defaultPoints}" required min="1" max="100">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" name="description" class="form-control" th:value="${cat.description}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Dynamic Field Schema (JSON Definition)</label>
+                        <textarea name="schemaJson" class="form-control" rows="2" style="font-family: var(--font-mono); font-size: 0.82rem;" th:text="${cat.schemaJson}"></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary btn-sm">Save Category Configuration</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

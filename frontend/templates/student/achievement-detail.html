@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Achievement Details')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container container-narrow">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/student/achievements}" style="font-size: 0.88rem; color: var(--slate-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to My Uploads
+            </a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.75rem;">
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);" th:text="${achievement.title}">
+                    Achievement Title
+                </h1>
+                <span class="badge" th:classappend="${achievement.status.badgeClass}" th:text="${achievement.status.label}">Status</span>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3 class="card-title">Record Metadata &amp; Parameters</h3>
+                <span class="badge badge-category" th:text="${achievement.category.name}">Category</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.92rem; margin-bottom: 1.5rem;">
+                <div><strong>Event Name:</strong> <span th:text="${achievement.eventName}">Event</span></div>
+                <div><strong>Organizing Body:</strong> <span th:text="${achievement.organizer}">Organizer</span></div>
+                <div><strong>Level:</strong> <span th:text="${achievement.level.displayName}">Level</span></div>
+                <div><strong>Event Date:</strong> <span th:text="${achievement.eventDate}">2025-11-20</span></div>
+                <div><strong>Submitted At:</strong> <span th:text="${#temporals.format(achievement.submittedAt, 'dd MMM yyyy HH:mm')}">Date</span></div>
+                <div><strong>Points Awarded:</strong> <span style="font-weight: 700; color: #059669;" th:text="${achievement.pointsAwarded} + ' pts'">0 pts</span></div>
+            </div>
+
+            <div th:if="${achievement.description != null && !achievement.description.isBlank()}" style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--slate-700); margin-bottom: 0.35rem;">Summary / Description</h4>
+                <p style="font-size: 0.92rem; color: var(--slate-600); line-height: 1.6; background: var(--slate-50); padding: 1rem; border-radius: var(--radius-md);" th:text="${achievement.description}">
+                    Description text...
+                </p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--slate-700); margin-bottom: 0.35rem;">Category Schema Payload</h4>
+                <pre style="background: var(--slate-900); color: #38bdf8; padding: 1rem; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.82rem; overflow-x: auto;" th:text="${achievement.metadataJson}">{}</pre>
+            </div>
+
+            <!-- Documents -->
+            <div>
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--slate-800); margin-bottom: 0.75rem;">
+                    Archived Evidence Files (File Vault)
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div th:each="doc : ${achievement.documents}" style="display: flex; justify-content: space-between; align-items: center; background: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;" th:text="${doc.originalFileName}">proof.pdf</div>
+                            <div style="font-size: 0.75rem; color: var(--slate-500); font-family: var(--font-mono); margin-top: 0.2rem;">
+                                SHA-256: <span th:text="${doc.checksumSha256}">hash...</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a th:href="@{'/vault/documents/' + ${doc.id} + '/view'}" target="_blank" class="btn btn-secondary btn-sm">Preview</a>
+                            <a th:href="@{'/vault/documents/' + ${doc.id} + '/download'}" class="btn btn-primary btn-sm">Download</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification History (Append-Only Log) -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Verification Decisions &amp; Institutional Log</h3>
+            </div>
+            <div th:if="${#lists.isEmpty(achievement.verifications)}" style="color: var(--slate-500); font-size: 0.88rem; padding: 0.5rem 0;">
+                No faculty decisions recorded yet. This item is in the pending verification queue.
+            </div>
+            <div th:each="v : ${achievement.verifications}" style="padding: 1rem; border-bottom: 1px solid var(--slate-100);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <div>
+                        <strong th:text="${v.faculty.user.fullName}">Prof. Name</strong>
+                        <span style="font-size: 0.8rem; color: var(--slate-500);" th:text="'(' + ${v.faculty.designation} + ', ' + ${v.faculty.department} + ')'">(CSE)</span>
+                    </div>
+                    <span class="badge" th:classappend="${v.decision.badgeClass}" th:text="${v.decision.label}">Decision</span>
+                </div>
+                <div style="font-size: 0.88rem; color: var(--slate-700); line-height: 1.5;" th:if="${v.remarks != null && !v.remarks.isBlank()}">
+                    <span style="font-weight: 600;">Remarks:</span> <span th:text="${v.remarks}">Remarks here</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--slate-400); margin-top: 0.35rem;" th:text="${#temporals.format(v.reviewedAt, 'dd MMM yyyy HH:mm:ss')}">Timestamp</div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

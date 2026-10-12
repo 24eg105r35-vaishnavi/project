@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verification Queue')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">Faculty Verification Queue</h1>
+                <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                    Pre-filtered for scope: <strong th:text="${faculty.assignedCategoryScope}">ALL</strong>. Review claims beside proof.
+                </p>
+            </div>
+            <div>
+                <span class="badge badge-pending" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;" th:text="${#lists.size(queue)} + ' Awaiting Decision'">
+                    1 Awaiting Decision
+                </span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll Number</th>
+                            <th>Category</th>
+                            <th>Achievement Title</th>
+                            <th>Event &amp; Organizer</th>
+                            <th>Level</th>
+                            <th>Submitted At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(queue)}">
+                            <td colspan="8" style="text-align: center; padding: 3rem; color: var(--slate-500);">
+                                👏 Outstanding! All student submissions in your department have been reviewed.
+                            </td>
+                        </tr>
+                        <tr th:each="a : ${queue}">
+                            <td>
+                                <strong th:text="${a.student.user.fullName}">Student Name</strong>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);" th:text="${a.student.branch}">Branch</div>
+                            </td>
+                            <td>
+                                <code th:text="${a.student.rollNumber}">DEMO001</code>
+                            </td>
+                            <td>
+                                <span class="badge badge-category" th:text="${a.category.name}">Category</span>
+                            </td>
+                            <td>
+                                <div style="font-weight: 600;" th:text="${a.title}">Achievement Title</div>
+                            </td>
+                            <td>
+                                <div th:text="${a.eventName}">Event</div>
+                                <div style="font-size: 0.78rem; color: var(--slate-500);" th:text="${a.organizer}">Organizer</div>
+                            </td>
+                            <td>
+                                <span class="badge badge-level" th:text="${a.level.displayName}">Level</span>
+                            </td>
+                            <td th:text="${#temporals.format(a.submittedAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                            <td>
+                                <a th:href="@{'/faculty/review/' + ${a.id}}" class="btn btn-primary btn-sm">Inspect Proof &amp; Verify</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

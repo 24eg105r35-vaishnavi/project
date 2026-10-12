@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('System Audit Log')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/dashboard}" style="font-size: 0.88rem; color: var(--slate-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to Admin Console
+            </a>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900); margin-top: 0.5rem;">
+                Immutable Audit Trail (Section 05 &amp; 06)
+            </h1>
+            <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                Every achievement submission, verification decision, and schema alteration is logged inside the same database transaction.
+            </p>
+        </div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive" style="border: none;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Actor / Email</th>
+                            <th>Action</th>
+                            <th>Entity Type &amp; ID</th>
+                            <th>Audit Details</th>
+                            <th>Client IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(logs)}">
+                            <td colspan="6" style="text-align: center; padding: 3rem; color: var(--slate-500);">
+                                No audit log entries recorded yet.
+                            </td>
+                        </tr>
+                        <tr th:each="l : ${logs}">
+                            <td style="font-family: var(--font-mono); font-size: 0.8rem; white-space: nowrap;"
+                                th:text="${#temporals.format(l.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Time</td>
+                            <td><strong th:text="${l.userEmail != null ? l.userEmail : 'SYSTEM'}">user@anurag.edu.in</strong></td>
+                            <td><span class="badge badge-category" th:text="${l.action}">ACTION</span></td>
+                            <td><code th:text="${l.entityType} + '#' + ${l.entityId}">ENTITY#1</code></td>
+                            <td style="font-size: 0.85rem; color: var(--slate-700); max-width: 400px; word-break: break-word;" th:text="${l.details}">Details</td>
+                            <td><code style="font-size: 0.78rem;" th:text="${l.ipAddress}">127.0.0.1</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+            <a th:if="${currentPage > 0}" th:href="@{/admin/audit-logs(page=${currentPage - 1})}" class="btn btn-secondary btn-sm">← Previous</a>
+            <span style="display: flex; align-items: center; padding: 0 0.75rem; font-size: 0.88rem; color: var(--slate-600);">
+                Page <span th:text="${currentPage + 1}" style="font-weight: 700; margin: 0 0.25rem;">1</span> of <span th:text="${totalPages}" style="margin-left: 0.25rem;">1</span>
+            </span>
+            <a th:if="${currentPage + 1 < totalPages}" th:href="@{/admin/audit-logs(page=${currentPage + 1})}" class="btn btn-secondary btn-sm">Next →</a>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

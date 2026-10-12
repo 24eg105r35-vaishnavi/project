@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit & Resubmit Achievement')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container container-narrow">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/student/achievements}" style="font-size: 0.88rem; color: var(--slate-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to My Uploads
+            </a>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900); margin-top: 0.5rem;">
+                Edit &amp; Resubmit for Verification
+            </h1>
+        </div>
+
+        <!-- Correction Remark Banner -->
+        <div class="alert alert-warning" th:if="${!#lists.isEmpty(achievement.verifications)}">
+            <div>
+                <strong>Faculty Feedback:</strong>
+                <p style="margin-top: 0.35rem; font-size: 0.92rem;" th:text="${achievement.verifications[0].remarks}">
+                    Please attach valid certificate instead of registration screenshot.
+                </p>
+                <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 0.25rem;">
+                    Reviewed by <span th:text="${achievement.verifications[0].faculty.user.fullName}">Prof. Name</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <form th:action="@{'/student/achievements/' + ${achievement.id} + '/edit'}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="form-group">
+                    <label class="form-label" for="title">Achievement Title *</label>
+                    <input type="text" id="title" name="title" class="form-control" th:value="${achievement.title}" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="eventName">Event / Competition Name *</label>
+                        <input type="text" id="eventName" name="eventName" class="form-control" th:value="${achievement.eventName}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="organizer">Organizing Body *</label>
+                        <input type="text" id="organizer" name="organizer" class="form-control" th:value="${achievement.organizer}" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="level">Level *</label>
+                        <select id="level" name="level" class="form-select" required>
+                            <option th:each="lvl : ${levels}" th:value="${lvl.name()}"
+                                    th:selected="${lvl == achievement.level}"
+                                    th:text="${lvl.displayName}">National Level</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eventDate">Event Date *</label>
+                        <input type="date" id="eventDate" name="eventDate" class="form-control" th:value="${achievement.eventDate}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">Summary / Impact</label>
+                    <textarea id="description" name="description" class="form-control" th:text="${achievement.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <strong>Upload Additional / Corrected Proof Document (Optional)</strong>
+                        <small style="display: block; color: var(--slate-500);">
+                            Leave empty to retain existing attached files. (Max 25MB).
+                        </small>
+                    </label>
+                    <div class="upload-zone">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-title">Choose Corrected Proof File</div>
+                        <input type="file" name="proofFiles" class="proof-file-input file-input-hidden"
+                               accept="image/*,application/pdf" capture="environment">
+                    </div>
+                    <input type="hidden" name="docTypes" value="CORRECTED_PROOF">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem;">
+                        Save &amp; Resubmit to Verification Queue
+                    </button>
+                    <a th:href="@{/student/achievements}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

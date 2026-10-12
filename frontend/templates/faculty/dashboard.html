@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Faculty Verification Desk')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <!-- Faculty Welcome Card -->
+        <div class="card" style="margin-bottom: 2rem; border-left: 6px solid #0284c7;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span class="badge badge-level" style="margin-bottom: 0.35rem;">FACULTY VERIFIER PORTAL</span>
+                    <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900);" th:text="${faculty.user.fullName}">
+                        Dr. K. Srinivas Rao
+                    </h1>
+                    <div style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                        <span th:text="${faculty.designation}">Associate Professor</span> •
+                        <span th:text="${faculty.department}">CSE</span> •
+                        Assigned Scope: <strong th:text="${faculty.assignedCategoryScope}">ALL</strong>
+                    </div>
+                </div>
+
+                <div>
+                    <a th:href="@{/faculty/queue}" class="btn btn-primary">
+                        <span>Open Verification Queue</span>
+                        <span th:if="${pendingCount > 0}" style="background: white; color: var(--primary-700); padding: 0.1rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 800; margin-left: 0.35rem;" th:text="${pendingCount}">1</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fffbeb; color: #b45309;">⏳</div>
+                <div>
+                    <div class="stat-val" th:text="${pendingCount}">1</div>
+                    <div class="stat-label">Pending Reviews in Queue</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e0f2fe; color: #0369a1;">🔍</div>
+                <div>
+                    <div class="stat-val" th:text="${faculty.assignedCategoryScope}">ALL</div>
+                    <div class="stat-label">Auditing Responsibility Scope</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #ecfdf5; color: #047857;">🛡️</div>
+                <div>
+                    <div class="stat-val">Append-Only</div>
+                    <div class="stat-label">Institutional Audit Trail</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Items Table Preview -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Pending Student Submissions Awaiting Audit</h3>
+                    <p style="font-size: 0.82rem; color: var(--slate-500); margin-top: 0.2rem;">
+                        Every decision writes an immutable log with your institutional ID
+                    </p>
+                </div>
+                <a th:href="@{/faculty/queue}" class="btn btn-secondary btn-sm">Full Queue</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll Number</th>
+                            <th>Category</th>
+                            <th>Achievement Title</th>
+                            <th>Level</th>
+                            <th>Date</th>
+                            <th>Proof Files</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(recentPending)}">
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--slate-500);">
+                                🎉 Your queue is clear! No pending submissions require verification at this moment.
+                            </td>
+                        </tr>
+                        <tr th:each="a : ${recentPending}">
+                            <td>
+                                <strong th:text="${a.student.user.fullName}">Student Name</strong>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);" th:text="${a.student.branch}">Branch</div>
+                            </td>
+                            <td>
+                                <code th:text="${a.student.rollNumber}">DEMO001</code>
+                            </td>
+                            <td>
+                                <span class="badge badge-category" th:text="${a.category.name}">Category</span>
+                            </td>
+                            <td th:text="${a.title}">Title</td>
+                            <td>
+                                <span class="badge badge-level" th:text="${a.level.displayName}">Level</span>
+                            </td>
+                            <td th:text="${a.eventDate}">2026-02-18</td>
+                            <td>
+                                <span th:text="${#lists.size(a.documents)} + ' file(s)'">1 file</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/faculty/review/' + ${a.id}}" class="btn btn-primary btn-sm">Inspect &amp; Verify</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

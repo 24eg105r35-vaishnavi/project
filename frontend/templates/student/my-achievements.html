@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Achievements')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">My Achievement Portfolio</h1>
+                <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                    Track verification milestones, attached proofs, and audit remarks.
+                </p>
+            </div>
+            <a th:href="@{/student/achievements/new}" class="btn btn-primary">+ Upload New Achievement</a>
+        </div>
+
+        <!-- Filter Chips -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <a th:href="@{/student/achievements}" class="btn btn-sm"
+               th:classappend="${selectedStatus == null ? 'btn-primary' : 'btn-secondary'}">All</a>
+            <a th:href="@{/student/achievements(status='APPROVED')}" class="btn btn-sm"
+               th:classappend="${selectedStatus == 'APPROVED' ? 'btn-primary' : 'btn-secondary'}">Verified</a>
+            <a th:href="@{/student/achievements(status='PENDING')}" class="btn btn-sm"
+               th:classappend="${selectedStatus == 'PENDING' ? 'btn-primary' : 'btn-secondary'}">Pending</a>
+            <a th:href="@{/student/achievements(status='RETURNED_FOR_CORRECTION')}" class="btn btn-sm"
+               th:classappend="${selectedStatus == 'RETURNED_FOR_CORRECTION' ? 'btn-warning' : 'btn-secondary'}">Needs Correction</a>
+            <a th:href="@{/student/achievements(status='REJECTED')}" class="btn btn-sm"
+               th:classappend="${selectedStatus == 'REJECTED' ? 'btn-danger' : 'btn-secondary'}">Rejected</a>
+        </div>
+
+        <!-- Achievements Cards -->
+        <div th:if="${#lists.isEmpty(achievements)}" class="card" style="text-align: center; padding: 3rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📂</div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-700);">No submissions found matching this filter</h3>
+            <p style="font-size: 0.88rem; color: var(--slate-500); margin-top: 0.35rem;">
+                Try choosing another status filter or submit a new achievement credential.
+            </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div th:each="a : ${achievements}" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                            <span class="badge badge-category" th:text="${a.category.name}">Hackathon</span>
+                            <span class="badge badge-level" th:text="${a.level.displayName}">National</span>
+                            <span class="badge" th:classappend="${a.status.badgeClass}" th:text="${a.status.label}">Under Review</span>
+                        </div>
+                        <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--slate-900);">
+                            <a th:href="@{'/student/achievements/' + ${a.id}}" th:text="${a.title}">Achievement Title</a>
+                        </h2>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <div th:if="${a.status.name() == 'APPROVED'}" style="font-size: 1.25rem; font-weight: 800; color: #059669;">
+                            <span th:text="'+' + ${a.pointsAwarded} + ' pts'">+20 pts</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--slate-500);" th:text="'Event Date: ' + ${a.eventDate}">2025-11-20</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.9rem; color: var(--slate-600); line-height: 1.6; margin-bottom: 1rem;" th:text="${a.description}">
+                    Achievement description...
+                </p>
+
+                <!-- Attached Proof Documents -->
+                <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1rem;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--slate-600); text-transform: uppercase; margin-bottom: 0.4rem;">
+                        Attached Proof Documents (In Secure Vault)
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        <div th:each="doc : ${a.documents}" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; background: white; border: 1px solid var(--slate-300); padding: 0.3rem 0.65rem; border-radius: var(--radius-sm);">
+                            <span>📄</span>
+                            <span th:text="${doc.originalFileName}">proof.pdf</span>
+                            <span style="font-size: 0.75rem; color: var(--slate-400);" th:text="'(' + ${(doc.fileSize / 1024)} + ' KB)'">(45 KB)</span>
+                            <a th:href="@{'/vault/documents/' + ${doc.id} + '/view'}" target="_blank" class="btn btn-secondary btn-sm" style="padding: 0.15rem 0.45rem; font-size: 0.72rem;">Preview</a>
+                            <a th:href="@{'/vault/documents/' + ${doc.id} + '/download'}" class="btn btn-secondary btn-sm" style="padding: 0.15rem 0.45rem; font-size: 0.72rem;">Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Faculty Remarks / Correction Notice (Section 07.9) -->
+                <div th:if="${!#lists.isEmpty(a.verifications)}" style="margin-bottom: 1rem;">
+                    <div th:each="v : ${a.verifications}" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-top: 0.4rem;"
+                         th:styleappend="${v.decision.name() == 'APPROVED' ? 'background: #ecfdf5; border-left: 3px solid #10b981;' : (v.decision.name() == 'RETURNED_FOR_CORRECTION' ? 'background: #eff6ff; border-left: 3px solid #3b82f6;' : 'background: #fef2f2; border-left: 3px solid #ef4444;')}">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+                            <strong>
+                                Faculty Review by <span th:text="${v.faculty.user.fullName}">Prof. Name</span>
+                                (<span th:text="${v.faculty.department}">CSE</span>)
+                            </strong>
+                            <span style="color: var(--slate-500); font-size: 0.78rem;" th:text="${#temporals.format(v.reviewedAt, 'dd MMM yyyy HH:mm')}">Time</span>
+                        </div>
+                        <div th:if="${v.remarks != null && !v.remarks.isBlank()}" th:text="'Remarks: ' + ${v.remarks}">Remarks</div>
+                    </div>
+                </div>
+
+                <!-- Action Footer -->
+                <div style="display: flex; justify-content: flex-end; gap: 0.6rem; border-top: 1px solid var(--slate-100); padding-top: 0.75rem;">
+                    <a th:href="@{'/student/achievements/' + ${a.id}}" class="btn btn-secondary btn-sm">Full Audit Record</a>
+                    <a th:if="${a.status.name() == 'RETURNED_FOR_CORRECTION'}"
+                       th:href="@{'/student/achievements/' + ${a.id} + '/edit'}"
+                       class="btn btn-warning btn-sm">Edit &amp; Resubmit</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

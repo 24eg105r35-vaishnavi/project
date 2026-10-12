@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Section 10 SEO Optimization -->
+    <title th:text="${student.user.fullName} + ' (' + ${student.rollNumber} + ') — Verified Achievement Portfolio | Anurag University'">Student Portfolio</title>
+    <meta name="description" th:content="'Official verified achievement record of ' + ${student.user.fullName} + ' (' + ${student.rollNumber} + '), ' + ${student.branch} + ' at Anurag University. ' + ${verifiedCount} + ' authenticated credentials.'">
+    <meta property="og:title" th:content="${student.user.fullName} + ' — Verified Achievement Portfolio'">
+    <meta property="og:description" th:content="'Authenticated student portfolio hosted by Anurag University. ' + ${totalPoints} + ' verified points accumulated.'">
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Anurag University Student Achievement Portal">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+
+    <!-- Section 10 Structured Data JSON-LD -->
+    <script type="application/ld+json" th:utext="${jsonLd}"></script>
+</head>
+<body style="background: #f8fafc;">
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+
+        <!-- Verified Profile Header Card -->
+        <div class="portfolio-header">
+            <div class="portfolio-user-info">
+                <div class="portfolio-avatar">
+                    <span th:text="${#strings.substring(student.user.fullName, 0, 1)}">V</span>
+                </div>
+                <div>
+                    <h1 class="portfolio-title" th:text="${student.user.fullName}">Demo Student</h1>
+                    <div class="portfolio-meta">
+                        <div>🏛️ Anurag University, Hyderabad</div>
+                        <div>🎓 <span th:text="${student.branch}">CSE (AIML)</span></div>
+                        <div>🆔 Roll: <strong th:text="${student.rollNumber}">DEMO001</strong></div>
+                        <div>📅 Batch: <span th:text="${student.admissionYear} + ' - ' + (${student.admissionYear} + 4)">2024 - 2028</span></div>
+                    </div>
+                    <div>
+                        <div class="verified-stamp">
+                            <span>🛡️ Institutional Verification Stamp</span>
+                            <span>•</span>
+                            <span th:text="${verifiedCount} + ' Verified Claims'">5 Verified Claims</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; max-width: 800px; color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;"
+                 th:if="${student.bio != null && !student.bio.isBlank()}" th:text="${student.bio}">
+                Student biography...
+            </div>
+
+            <!-- Print / Share Bar -->
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.15); color: white; border-color: rgba(255, 255, 255, 0.3);">
+                    🖨️ Print / Save Verified PDF
+                </button>
+                <button type="button" onclick="navigator.clipboard.writeText(window.location.href); alert('Portfolio link copied to clipboard!');" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.15); color: white; border-color: rgba(255, 255, 255, 0.3);">
+                    🔗 Copy Profile Link
+                </button>
+            </div>
+        </div>
+
+        <!-- Metric Badges Row -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eef2ff; color: #4338ca;">🏆</div>
+                <div>
+                    <div class="stat-val" th:text="${totalPoints} + ' pts'">69 pts</div>
+                    <div class="stat-label">Verified Merit Score</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #ecfdf5; color: #047857;">📜</div>
+                <div>
+                    <div class="stat-val" th:text="${verifiedCount}">5</div>
+                    <div class="stat-label">Authenticated Credentials</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf2f8; color: #be185d;">🎖️</div>
+                <div>
+                    <div class="stat-val">Top 1%</div>
+                    <div class="stat-label">Department Honor Roll</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified Achievements Chronological Timeline -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title" style="font-size: 1.3rem;">Authenticated Achievements &amp; Proof Vault</h2>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-top: 0.2rem;">
+                        Only credentials reviewed and signed off by authorized faculty are published on this public ledger.
+                    </p>
+                </div>
+                <span class="badge badge-approved">Faculty Signed</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(achievements)}" style="text-align: center; padding: 3rem; color: var(--slate-500);">
+                No verified achievements have been made public yet.
+            </div>
+
+            <div class="timeline" th:if="${!#lists.isEmpty(achievements)}">
+                <div class="timeline-item" th:each="a : ${achievements}">
+                    <div class="timeline-dot"></div>
+                    <div class="card" style="border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm); padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                    <span class="badge badge-category" th:text="${a.category.name}">Hackathon</span>
+                                    <span class="badge badge-level" th:text="${a.level.displayName}">National</span>
+                                    <span class="badge badge-approved">Verified</span>
+                                </div>
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-900);" th:text="${a.title}">
+                                    Title of Achievement
+                                </h3>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.25rem; font-weight: 800; color: #059669;" th:text="'+' + ${a.pointsAwarded} + ' pts'">+20 pts</div>
+                                <div style="font-size: 0.8rem; color: var(--slate-500);" th:text="${a.eventDate}">2025-11-20</div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 0.75rem;">
+                            <strong>Event / Venue:</strong> <span th:text="${a.eventName}">Event</span> •
+                            <strong>Issuer:</strong> <span th:text="${a.organizer}">Organizer</span>
+                        </div>
+
+                        <p style="font-size: 0.9rem; color: var(--slate-700); line-height: 1.6; margin-bottom: 1rem;" th:text="${a.description}">
+                            Description...
+                        </p>
+
+                        <!-- Attached Proof Preview & Verification Signature -->
+                        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                            <div th:if="${!#lists.isEmpty(a.documents)}" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span>📄</span>
+                                <span style="font-size: 0.85rem; font-weight: 600;" th:text="${a.documents[0].originalFileName}">certificate.pdf</span>
+                                <a th:href="@{'/vault/documents/' + ${a.documents[0].id} + '/view'}" target="_blank" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
+                                    View Proof
+                                </a>
+                            </div>
+
+                            <div th:if="${!#lists.isEmpty(a.verifications)}" style="font-size: 0.8rem; color: var(--slate-500);">
+                                Verified by <strong>Prof. <span th:text="${a.verifications[0].faculty.user.fullName}">Faculty</span></strong>
+                                (<span th:text="${a.verifications[0].faculty.department}">CSE</span>) on
+                                <span th:text="${#temporals.format(a.verifications[0].reviewedAt, 'dd MMM yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

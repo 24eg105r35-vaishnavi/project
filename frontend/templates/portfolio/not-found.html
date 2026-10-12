@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Profile Not Found')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content" style="display: flex; align-items: center; justify-content: center; min-height: 60vh;">
+    <div class="card" style="max-width: 500px; text-align: center; padding: 3rem 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900);">Student Profile Not Found</h1>
+        <p style="font-size: 0.92rem; color: var(--slate-600); margin: 0.75rem 0 1.5rem; line-height: 1.6;" th:text="${message}">
+            No active student profile matches this roll number or URL slug.
+        </p>
+        <a th:href="@{/explore}" class="btn btn-primary">Browse Central Database</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

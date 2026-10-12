@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <!-- Hero Section -->
+        <div style="background: linear-gradient(135deg, #1e1b4b, #312e81, #0f172a); border-radius: var(--radius-xl); padding: 3.5rem 2.5rem; color: white; margin-bottom: 2.5rem; position: relative; overflow: hidden; box-shadow: var(--shadow-xl);">
+            <div style="position: relative; z-index: 2; max-width: 800px;">
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 600; color: #c7d2fe; margin-bottom: 1.25rem;">
+                    <span>🎓 Official Institutional Repository</span>
+                    <span>•</span>
+                    <span>Anurag University</span>
+                </div>
+                <h1 style="font-size: 2.75rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; letter-spacing: -0.02em;">
+                    One place for every certificate, hackathon, medal &amp; paper.
+                </h1>
+                <p style="font-size: 1.15rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 2rem;">
+                    Upload once. Attach your proof. Verified by faculty. Never lost in WhatsApp chats or plastic folders again.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary btn-lg">
+                        <span>Get Started — Sign In</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a sec:authorize="hasRole('STUDENT')" th:href="@{/student/achievements/new}" class="btn btn-primary btn-lg">
+                        <span>+ Submit New Achievement</span>
+                    </a>
+                    <a th:href="@{/explore}" class="btn btn-secondary btn-lg" style="background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255, 255, 255, 0.25);">
+                        <span>Browse Verified Archive</span>
+                    </a>
+                    <a th:href="@{/portfolio/DEMO001}" class="btn btn-secondary btn-lg" style="background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255, 255, 255, 0.25);">
+                        <span>View Sample Verified Profile</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Metrics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eef2ff; color: #4f46e5;">📜</div>
+                <div>
+                    <div class="stat-val" th:text="${stats.totalAchievements}">5</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #ecfdf5; color: #059669;">✅</div>
+                <div>
+                    <div class="stat-val" th:text="${stats.approved}">5</div>
+                    <div class="stat-label">Verified &amp; Sealed</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fffbeb; color: #d97706;">⏳</div>
+                <div>
+                    <div class="stat-val" th:text="${stats.pending}">1</div>
+                    <div class="stat-label">In Faculty Queue</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf2f8; color: #db2777;">⭐</div>
+                <div>
+                    <div class="stat-val" th:text="${stats.verificationRate} + '%'">100%</div>
+                    <div class="stat-label">Audit Accuracy Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- One-Click Demo Role Accounts -->
+        <div class="card" style="margin-bottom: 2.5rem; background: #fafafa; border: 1.5px dashed var(--primary-300);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: 0.5rem; padding-bottom: 0;">
+                <div>
+                    <h3 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚡ Quick Demo Accounts</span>
+                        <span style="font-size: 0.75rem; background: var(--primary-100); color: var(--primary-800); padding: 0.2rem 0.6rem; border-radius: var(--radius-full);">For Evaluators &amp; Faculty</span>
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-top: 0.25rem;">
+                        Click on any role to immediately sign in to the demo account.
+                    </p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="font-weight: 700; color: var(--primary-700); font-size: 0.95rem;">Student (Author)</div>
+                    <div style="font-size: 0.82rem; color: var(--slate-600); margin: 0.25rem 0;">Demo Student</div>
+                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--slate-500);">student@example.com</div>
+                    <div style="font-size: 0.78rem; color: var(--slate-400);">pwd: <code>student123</code></div>
+                    <a th:href="@{/login(demo='student')}" class="btn btn-secondary btn-sm" style="margin-top: 0.6rem; width: 100%;">Log In as Student</a>
+                </div>
+
+                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="font-weight: 700; color: #0284c7; font-size: 0.95rem;">Academic Verifier</div>
+                    <div style="font-size: 0.82rem; color: var(--slate-600); margin: 0.25rem 0;">Dr. K. Srinivas Rao (CSE)</div>
+                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--slate-500);">cse.faculty@anurag.edu.in</div>
+                    <div style="font-size: 0.78rem; color: var(--slate-400);">pwd: <code>faculty123</code></div>
+                    <a th:href="@{/login(demo='faculty')}" class="btn btn-secondary btn-sm" style="margin-top: 0.6rem; width: 100%;">Log In as Faculty</a>
+                </div>
+
+                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="font-weight: 700; color: #059669; font-size: 0.95rem;">Sports Director</div>
+                    <div style="font-size: 0.82rem; color: var(--slate-600); margin: 0.25rem 0;">Prof. P. Ramana (PE)</div>
+                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--slate-500);">sports@anurag.edu.in</div>
+                    <div style="font-size: 0.78rem; color: var(--slate-400);">pwd: <code>sports123</code></div>
+                    <a th:href="@{/login(demo='sports')}" class="btn btn-secondary btn-sm" style="margin-top: 0.6rem; width: 100%;">Log In as Sports Verifier</a>
+                </div>
+
+                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="font-weight: 700; color: #d97706; font-size: 0.95rem;">Placement Cell</div>
+                    <div style="font-size: 0.82rem; color: var(--slate-600); margin: 0.25rem 0;">Ms. Shalini Gupta</div>
+                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--slate-500);">placements@anurag.edu.in</div>
+                    <div style="font-size: 0.78rem; color: var(--slate-400);">pwd: <code>place123</code></div>
+                    <a th:href="@{/login(demo='placements')}" class="btn btn-secondary btn-sm" style="margin-top: 0.6rem; width: 100%;">Log In as Placement Cell</a>
+                </div>
+
+                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="font-weight: 700; color: #dc2626; font-size: 0.95rem;">Institutional Admin</div>
+                    <div style="font-size: 0.82rem; color: var(--slate-600); margin: 0.25rem 0;">Controller of Records</div>
+                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--slate-500);">admin@anurag.edu.in</div>
+                    <div style="font-size: 0.78rem; color: var(--slate-400);">pwd: <code>admin123</code></div>
+                    <a th:href="@{/login(demo='admin')}" class="btn btn-secondary btn-sm" style="margin-top: 0.6rem; width: 100%;">Log In as Admin</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6 Distinct Achievement Categories (Section 07) -->
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); margin-bottom: 1.25rem;">
+            Unified Architecture for All Student Pursuits
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 3rem;">
+            <div class="card" style="border-top: 4px solid #6366f1;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">💻</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Hackathons</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Team size, individual technical role, outcome, and demo repository proof.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--primary-700); font-weight: 600;">Up to 20 Points • NAAC &amp; NBA</div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #0d9488;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">📄</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Paper Publications</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Journal, IEEE conference or patent. Digital Object Identifier (DOI) and author position verification.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #0d9488; font-weight: 600;">Up to 25 Points • Scopus/UGC CARE</div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #f59e0b;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">💼</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Industry Internships</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Offer letter and completion certificate verified by Placement Cell for branch statistics.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #b45309; font-weight: 600;">15 Points • Placement Ready</div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #10b981;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🏆</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Sports Achievements</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Intra-college, state and national medals routed directly to Physical Education verifiers.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #059669; font-weight: 600;">Up to 20 Points • Criterion 5.2.3</div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #0ea5e9;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🎯</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Competitions &amp; Quizzes</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Technical fests, coding tournaments, and symposiums with rank card validation.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #0284c7; font-weight: 600;">Up to 18 Points</div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #8b5cf6;">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">📜</div>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.35rem;">Certifications &amp; MOOCs</h3>
+                <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.5;">
+                    Cloud provider credentials, NPTEL, Coursera, and professional workshop certificates.
+                </p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #7c3aed; font-weight: 600;">3 Points Per Verified Course</div>
+            </div>
+        </div>
+
+        <!-- Leaderboard & Recent Verified Split Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Top Students Leaderboard -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🏅 Student Honor Ledger</h3>
+                    <a th:href="@{/explore}" class="btn btn-secondary btn-sm">Explore All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student</th>
+                                <th>Branch</th>
+                                <th style="text-align: right;">Verified Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="st, stat : ${topStudents}">
+                                <td th:text="${stat.count}">1</td>
+                                <td>
+                                    <a th:href="@{'/portfolio/' + ${st.rollNumber}}" style="font-weight: 700;">
+                                        <span th:text="${st.user.fullName}">Demo Student</span>
+                                    </a>
+                                    <div style="font-size: 0.75rem; color: var(--slate-500);" th:text="${st.rollNumber}">DEMO001</div>
+                                </td>
+                                <td th:text="${st.branch}">CSE (AIML)</td>
+                                <td style="text-align: right; font-weight: 800; color: var(--primary-700);" th:text="${st.totalPoints} + ' pts'">69 pts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Verified Achievements -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">✨ Recent Verified Achievements</h3>
+                    <span class="badge badge-approved">Faculty Verified</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <div th:each="a : ${recentVerified}" style="padding: 0.85rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); background: #fafafa;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                            <span class="badge badge-category" th:text="${a.category.name}">Hackathon</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #059669;" th:text="'+' + ${a.pointsAwarded} + ' pts'">+20 pts</span>
+                        </div>
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">
+                            <a th:href="@{'/portfolio/' + ${a.student.rollNumber}}" th:text="${a.title}">Smart India Hackathon 2025</a>
+                        </h4>
+                        <div style="font-size: 0.8rem; color: var(--slate-500); display: flex; gap: 0.75rem;">
+                            <span th:text="${a.student.user.fullName}">Demo Student</span>
+                            <span>•</span>
+                            <span th:text="${a.level.displayName}">National</span>
+                            <span>•</span>
+                            <span th:text="${a.eventDate}">2025-11-20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

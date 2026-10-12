@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Console')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="badge badge-level" style="margin-bottom: 0.35rem;">SECTION 7.13 INSTITUTIONAL CONTROLLER</span>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">Admin Control Center</h1>
+                <p style="font-size: 0.88rem; color: var(--slate-600); margin-top: 0.25rem;">
+                    Configure scoring weights, category schemas, verifier routing &amp; inspect cryptographic audit logs.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a th:href="@{/admin/categories}" class="btn btn-secondary btn-sm">Categories &amp; Schemas</a>
+                <a th:href="@{/admin/scoring}" class="btn btn-secondary btn-sm">Scoring Matrix</a>
+                <a th:href="@{/admin/verifiers}" class="btn btn-secondary btn-sm">Verifier Routing</a>
+                <a th:href="@{/admin/audit-logs}" class="btn btn-primary btn-sm">Audit Trail Viewer</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eef2ff; color: #4338ca;">👥</div>
+                <div>
+                    <div class="stat-val" th:text="${totalStudents}">2</div>
+                    <div class="stat-label">Registered Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #ecfdf5; color: #047857;">🎓</div>
+                <div>
+                    <div class="stat-val" th:text="${totalFaculty}">3</div>
+                    <div class="stat-label">Faculty Verifiers</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e0f2fe; color: #0369a1;">📜</div>
+                <div>
+                    <div class="stat-val" th:text="${totalAchievements}">6</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf2f8; color: #be185d;">🗂️</div>
+                <div>
+                    <div class="stat-val" th:text="${totalCategories}">6</div>
+                    <div class="stat-label">Active Categories</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Audit Log Entries Card -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Recent Immutable Audit Entries (Section 06)</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 0.2rem;">
+                        Written in the same transaction as every user action; can never quietly disagree with reality.
+                    </p>
+                </div>
+                <a th:href="@{/admin/audit-logs}" class="btn btn-secondary btn-sm">Full Log (50+)</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Actor / Email</th>
+                            <th>Action</th>
+                            <th>Entity</th>
+                            <th>Details</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="l : ${recentLogs}">
+                            <td style="font-family: var(--font-mono); font-size: 0.78rem;" th:text="${#temporals.format(l.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Time</td>
+                            <td><strong th:text="${l.userEmail}">user@anurag.edu.in</strong></td>
+                            <td><span class="badge badge-category" th:text="${l.action}">ACTION</span></td>
+                            <td><code th:text="${l.entityType} + '#' + ${l.entityId}">ACHIEVEMENT#1</code></td>
+                            <td style="font-size: 0.82rem; color: var(--slate-700);" th:text="${l.details}">Details</td>
+                            <td><code style="font-size: 0.75rem;" th:text="${l.ipAddress}">127.0.0.1</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

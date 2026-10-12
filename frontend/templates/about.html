@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('About & Project Abstract')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="main-content">
+    <div class="container container-narrow">
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <div style="border-bottom: 2px solid var(--slate-100); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                <span class="badge badge-level" style="margin-bottom: 0.5rem;">PROJECT ABSTRACT &amp; ARCHITECTURE</span>
+                <h1 style="font-size: 2rem; font-weight: 800; color: var(--slate-900);">STUDENT ACHIEVEMENT PORTAL</h1>
+                <p style="font-size: 1.05rem; color: var(--slate-600); margin-top: 0.5rem; line-height: 1.6;">
+                    One place where every certificate, hackathon, medal, paper, internship and prize a student earns is uploaded, verified and never lost again.
+                </p>
+            </div>
+
+            <!-- Sample profile details -->
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.75rem;">
+                <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-500); margin-bottom: 0.75rem;">Sample Demo Profile</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.92rem;">
+                    <div><strong>Name:</strong> Demo Student</div>
+                    <div><strong>Roll Number:</strong> DEMO001</div>
+                    <div><strong>College:</strong> Anurag University, Hyderabad</div>
+                    <div><strong>Branch:</strong> CSE (AIML)</div>
+                    <div><strong>E-mail:</strong> student@example.com</div>
+                </div>
+            </div>
+
+            <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--slate-900); margin: 1.5rem 0 0.75rem;">01 The Idea, in One Page</h2>
+            <p style="color: var(--slate-700); line-height: 1.7; margin-bottom: 1rem;">
+                Every student collects proof of who they are becoming. A certificate from a workshop attended on a Saturday. A hackathon that ran for thirty-six hours and ended in a photograph nobody printed. A medal from an inter-college tournament. A paper that finally got accepted. An internship offer letter. A first prize at a coding contest. Individually they are small; together they are the entire story of a student's four years.
+            </p>
+            <p style="color: var(--slate-700); line-height: 1.7; margin-bottom: 1rem;">
+                Today that story lives in the worst possible place — a phone gallery, a WhatsApp forward, an e-mail thread, a plastic folder that comes out once a year. When a resume, scholarship form, placement drive, or accreditation report needs evidence, the hunt begins from zero every single time.
+            </p>
+            <p style="color: var(--slate-700); line-height: 1.7; margin-bottom: 1.5rem;">
+                The Student Achievement Portal replaces that hunt with a system. A student uploads an achievement once, attaches proof, and picks its category. A faculty member reviews it and approves or returns it with a reason. From that moment, the record is permanent, searchable, and trusted.
+            </p>
+
+            <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--slate-900); margin: 1.5rem 0 0.75rem;">The 4-Layer Architecture</h2>
+            <ul style="padding-left: 1.5rem; line-height: 1.8; color: var(--slate-700); margin-bottom: 1.5rem;">
+                <li><strong>Device Layer:</strong> Phones, tablets, and lab machines all receive the same lightweight HTML. Fast even on weak campus Wi-Fi.</li>
+                <li><strong>Presentation:</strong> Server-rendered Thymeleaf templates styled by hand-written vanilla CSS. Zero bulky JS bundles.</li>
+                <li><strong>Application:</strong> Spring Security filter answers authentication and authorization before controllers run. Controllers validate, Services enforce business logic, Repositories talk to MySQL.</li>
+                <li><strong>Persistence:</strong> Relational schema over MySQL (or H2 in MySQL mode). Proof documents stored in an isolated, secure File Vault with SHA-256 checksum deduplication. Append-only verification log.</li>
+            </ul>
+
+            <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--slate-900); margin: 1.5rem 0 0.75rem;">Technology Stack Defended</h2>
+            <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                <table class="table">
+                    <thead>
+                        <tr><th>Layer</th><th>Technology</th><th>Rationale</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Framework</td><td>Spring Boot (Web, Security, JPA)</td><td>Enterprise reliability, role authorization, and transactional safety.</td></tr>
+                        <tr><td>Templating</td><td>Thymeleaf</td><td>Server-rendered HTML, search-engine indexable, and CSRF integrated.</td></tr>
+                        <tr><td>Styling</td><td>Hand-written Vanilla CSS</td><td>Under 30KB, custom properties, Flexbox/Grid, zero framework bloat.</td></tr>
+                        <tr><td>Database</td><td>MySQL 8.0 &amp; Spring Data JPA</td><td>Relational integrity, foreign keys, and audit logs.</td></tr>
+                        <tr><td>Vault</td><td>Isolated File Storage</td><td>SHA-256 checksum, MIME protection, served through controlled endpoints.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a th:href="@{/explore}" class="btn btn-primary">Browse Centralized Achievement Archive</a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
