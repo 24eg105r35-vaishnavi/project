@@ -58,6 +58,10 @@ The project includes a root-level `Dockerfile` for deployment as a Render web se
 
 **Persistence and demo security:** The default H2 database and uploaded files are stored on the service's local filesystem and can be lost on Render restarts or redeploys. For persistence, attach a Render disk mounted at `/var/data` (on a plan that supports disks), then set `SPRING_DATASOURCE_URL` to `jdbc:h2:file:/var/data/portaldb;MODE=MySQL;DATABASE_TO_UPPER=FALSE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE` and `APP_UPLOAD_DIR` to `/var/data/file-vault`. Keep this as a single service instance. The seeded demo accounts have known passwords; do not use this deployment with real student data unless you first secure the accounts and storage.
 
+## Deploying the Static Preview on Netlify
+
+The `netlify/` directory contains a standalone landing-page preview, and the root `netlify.toml` configures Netlify to publish it without a build command. In Netlify, import this GitHub repository and deploy the `main` branch. This static preview does not include the Thymeleaf pages, sign-in, live data, or upload functionality; those require the Spring Boot application.
+
 ---
 
 ## 🔑 Demo Accounts (Pre-Seeded & Ready)
