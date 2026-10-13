@@ -1,0 +1,41 @@
+# Stage 1: Build the application
+FROM eclipse-temurin:21.0.11_9-jdk AS build
+
+WORKDIR /app
+
+# Copy Maven files
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+
+# Make Maven wrapper executable
+RUN chmod +x mvnw
+
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B
+
+# Copy source code
+COPY src/ src/
+
+# Build the Spring Boot JAR
+RUN ./mvnw clean package -DskipTests -B
+
+
+# Stage 2: Run the application
+FROM eclipse-temurin:21.0.11_9-jre AS runtime
+
+WORKDIR /app
+
+# Create a non-root user
+RUN useradd --system --uid 10001 appuser
+
+# Copy the JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Run as a non-root user
+USER appuser
+
+# Application port
+EXPOSE 8080
+
+# Start Spring Boot
+ENTRYPOINT ["java", "-jar", "app.jar"]
